@@ -33,7 +33,7 @@ public class UserDAO {
     }
 
     /**
-     * user信息注册保存
+     * user信息注册
      * @param name
      * @param pwd
      * @param tel
@@ -82,7 +82,44 @@ public class UserDAO {
         return user_id;
     }
 
-    public void update(User user) {
+    /**
+     * 根据user标识查询基本信息
+     * @param user_id
+     * @return
+     */
+    public User findUserByID(int user_id) {
+        User user = new User();
+        String sql = "SELECT * FROM tb_user WHERE user_id=?";
+        Connection conn = DBUtil.getConnection();
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, user_id);
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next()){
+                user = new User(
+                        rs.getInt("user_id"),
+                        rs.getString("user_name"),
+                        rs.getString("user_pwd"),
+                        rs.getString("user_tel"),
+                        rs.getDate("user_birth"),
+                        rs.getString("user_img"),
+                        rs.getString("user_slogan")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.closeJDBC(null, pstmt, conn);
+        }
+        return user;
+    }
+
+    /**
+     * 修改个人信息
+     * @param user
+     */
+    public void updateUser(User user) {
         String sql = "UPDATE tb_user "
                 + "SET user_name=?, user_tel=?, user_birth=?, user_slogan=?, "
                 + "WHERE user_id=?";
@@ -95,6 +132,68 @@ public class UserDAO {
 
             pstmt.setDate(3, (java.sql.Date) user.getUser_birth());
             pstmt.setString(4, user.getUser_slogan());
+            pstmt.setInt(5,user.getUser_id());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.closeJDBC(null, pstmt, conn);
+        }
+    }
+
+    /**
+     * 修改用户头像
+     * @param user_id
+     * @param newFilePath
+     */
+    public void updateHeadShot(int user_id, String newFilePath) {
+        String sql = "UPDATE tb_user SET user_img=? WHERE user_id=?";
+        Connection conn = DBUtil.getConnection();
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, newFilePath);
+            pstmt.setInt(2, user_id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.closeJDBC(null, pstmt, conn);
+        }
+    }
+
+    /**
+     * 修改用户密码
+     * @param user_id
+     * @param user_pwd
+     */
+    public void updatePwd(int user_id, String user_pwd) {
+        String sql = "UPDATE tb_user SET user_pwd=? WHERE user_id=?";
+        Connection conn = DBUtil.getConnection();
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, user_pwd);
+            pstmt.setInt(2, user_id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.closeJDBC(null, pstmt, conn);
+        }
+    }
+
+    /**
+     * 注销用户
+     * @param user_id
+     */
+    public void deleteUser(int user_id) {
+        String sql = "DELETE FROM tb_user WHERE user_id=?";
+        Connection conn = DBUtil.getConnection();
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, user_id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
