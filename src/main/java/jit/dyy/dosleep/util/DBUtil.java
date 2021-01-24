@@ -9,7 +9,7 @@ public class DBUtil {
 	//数据库密码
 	static String password="123456";
 	//数据库地址
-	static String url="jdbc:mysql://localhost:3306/dysql";
+	static String url="jdbc:mysql://localhost:3306/dysql?serverTimezone=UTC";
 
 	static{
 		try {

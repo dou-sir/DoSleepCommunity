@@ -17,7 +17,9 @@
     overflow: hidden;
     top: 15%;
 }
-
+.clear{
+    clear:both
+}
 .le-1{
     position: relative;
     animation: myflrg 0.25s;

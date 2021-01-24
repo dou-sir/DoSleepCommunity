@@ -121,7 +121,7 @@ public class UserDAO {
      */
     public void updateUser(User user) {
         String sql = "UPDATE tb_user "
-                + "SET user_name=?, user_tel=?, user_birth=?, user_slogan=?, "
+                + "SET user_name=?, user_tel=?, user_birth=?, user_slogan=? "
                 + "WHERE user_id=?";
         Connection conn = DBUtil.getConnection();
         PreparedStatement pstmt = null;

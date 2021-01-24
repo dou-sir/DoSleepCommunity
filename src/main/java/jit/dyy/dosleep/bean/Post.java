@@ -1,6 +1,6 @@
 package jit.dyy.dosleep.bean;
 
-import java.util.Date;
+import java.util.*;
 
 public class Post {
     private int psot_id;
@@ -10,6 +10,9 @@ public class Post {
     private Date post_time;
     private int post_clout;
     private int post_like;
+    private int post_comment;
+    private boolean islike;
+    private List<Comment> commentList = new ArrayList<Comment>();
 
     public Post() {
         super();
@@ -23,7 +26,7 @@ public class Post {
         this.post_time = post_time;
     }
 
-    public Post(int psot_id, int user_id, String post_content, String post_annex, Date post_time, int post_clout, int post_like) {
+    public Post(int psot_id, int user_id, String post_content, String post_annex, Date post_time, int post_clout, int post_like, int post_comment) {
         super();
         this.psot_id = psot_id;
         this.user_id = user_id;
@@ -32,6 +35,20 @@ public class Post {
         this.post_time = post_time;
         this.post_clout = post_clout;
         this.post_like = post_like;
+        this.post_comment = post_comment;
+    }
+
+    public Post(int psot_id, int user_id, String post_content, String post_annex, Date post_time, int post_clout, int post_like, int post_comment, boolean islike) {
+        super();
+        this.psot_id = psot_id;
+        this.user_id = user_id;
+        this.post_content = post_content;
+        this.post_annex = post_annex;
+        this.post_time = post_time;
+        this.post_clout = post_clout;
+        this.post_like = post_like;
+        this.post_comment = post_comment;
+        this.islike = islike;
     }
 
     public int getPsot_id() {
@@ -88,5 +105,29 @@ public class Post {
 
     public void setPost_like(int post_like) {
         this.post_like = post_like;
+    }
+
+    public int getPost_comment() {
+        return post_comment;
+    }
+
+    public void setPost_comment(int post_comment) {
+        this.post_comment = post_comment;
+    }
+
+    public boolean isIslike() {
+        return islike;
+    }
+
+    public void setIslike(boolean islike) {
+        this.islike = islike;
+    }
+
+    public List<Comment> getCommentList() {
+        return commentList;
+    }
+
+    public void setCommentList(List<Comment> commentList) {
+        this.commentList = commentList;
     }
 }

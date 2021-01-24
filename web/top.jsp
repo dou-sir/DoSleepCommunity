@@ -31,15 +31,15 @@
             </div>
             <div class="head_user">
                 <%
-                    if (session.getAttribute("SESSION_APPLICANT") == null) {
+                    if (session.getAttribute("SESSION_USER") == null) {
                 %>
                 <a href="login.jsp" target="_parent"><span class="type1">登录</span></a><a
                     href="register.jsp" target="_parent"><span class="type2">注册</span></a>
                 <%
                 } else {
                 %>
-                <a href="ResumeBasicinfoServlet?type=select">${sessionScope.SESSION_APPLICANT.applicantEmail}<%//=sessionApplicant.getApplicantEmail()%></a>&nbsp;&nbsp;
-                <a href="ApplicantLogoutServlet">退出</a>
+                <a href="ResumeBasicinfoServlet?type=select">Hi, ${sessionScope.SESSION_USER.user_name}<%//=sessionApplicant.getApplicantEmail()%></a>&nbsp;&nbsp;
+                <a href="UserLogoutServlet">退出</a>
                 <%
                     }
                 %>

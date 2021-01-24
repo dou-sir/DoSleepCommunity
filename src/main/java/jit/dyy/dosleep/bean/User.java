@@ -15,6 +15,13 @@ public class User {
         super();
     }
 
+    public User(int user_id, String user_name, String user_pwd) {
+        super();
+        this.user_id = user_id;
+        this.user_name = user_name;
+        this.user_pwd = user_pwd;
+    }
+
     public User(String user_name, String user_pwd, String user_tel) {
         super();
         this.user_name = user_name;
