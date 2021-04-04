@@ -1,0 +1,137 @@
+.wel{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+#background-3{
+    background: url("../images/bg0.jpg") no-repeat;
+    background-size: cover;
+    height: 900px;
+}
+.box{
+    width: 50%;
+    position: relative;
+    float: left;
+    overflow: hidden;
+    top: 15%;
+}
+.clear{
+    clear:both
+}
+.le-1{
+    position: relative;
+    animation: myflrg 0.25s;
+}
+.le-2{
+    position: relative;
+    animation: myflrg-2 0.25s;
+}
+/*面板*/
+.flrg{
+    float: right;
+    width: 350px;
+    background: rgba(255, 255, 255, 0.70);
+    text-align: center;
+    padding-bottom: 40px;
+    border-radius: 5px;
+}
+.a{
+    margin: auto;
+}
+.flrg>.a{
+    padding: 5px;
+}
+/*输入in*/
+.flrg>.a>.in-1{
+    outline: none;
+    opacity: 0.6;
+    width: 80%;
+    height: 33px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    color: black;
+    padding-left: 15px;
+}
+.flrg>.a>.in-2{
+    outline: none;
+    opacity: 0.6;
+    width: 43%;
+    height: 33px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    color: black;
+    padding-left: 15px;
+}
+.in-1:focus,.in-2:focus{
+    box-shadow: 0 0 1px #1b00ff inset, 0 0 18px #1b00ff;
+}
+.flrg>.a>button{
+    width: 80%;
+    padding: 5px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 19px rgba(0, 0, 0, .1);
+    background: rgba(6,127,228,0.71);
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 10px;
+    text-align: center;
+    outline: none;
+    transition: all 0.25s;
+}
+.flrg>.a>button:hover{
+    box-shadow:0 15px 30px 0 rgba(255,255,255,.15) inset, 0 2px 7px 0 rgba(0,0,0,.2);
+}
+
+.flrg>.a>a{
+    text-decoration: none;
+    font-weight: bold;
+    color: #545454;
+}
+
+/*登录位移*/
+@keyframes myflrg {
+    0%{
+        top: -300%;
+
+    }
+    100%{
+        top: 25%;
+    }
+}
+
+/*注册*/
+@keyframes myflrg-2 {
+    0%{
+        top: 300%;
+    }
+    100%{
+        top: 0;
+    }
+}
+
+/*input呼吸框*/
+/**
+@keyframes myin-1 {
+    0%{
+        box-shadow: 0 0 1px #1b00ff inset, 0 0 18px #1b00ff;
+    }
+    50%{
+        box-shadow:  0 0 3px #ff1000 inset, 0 0 18px #ff0300;
+    }
+    100%{
+        box-shadow: 0 0 3px #1b00ff inset, 0 0 18px #1b00ff;
+    }
+}
+ */
+
+
+
+
