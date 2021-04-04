@@ -6,7 +6,7 @@ import jit.dyy.dosleep.util.DBUtil;
 import java.sql.*;
 import java.util.Date;
 
-public class UserDAO {
+public class UserDAO extends User {
     /**
      * 验证用户名是否已被注册
      * @param name

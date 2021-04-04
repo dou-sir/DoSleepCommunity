@@ -4,6 +4,7 @@ import jit.dyy.dosleep.bean.Comment;
 import jit.dyy.dosleep.bean.Like;
 import jit.dyy.dosleep.bean.Post;
 import jit.dyy.dosleep.bean.User;
+import jit.dyy.dosleep.servlet.PostServlet;
 import jit.dyy.dosleep.util.DBUtil;
 
 import java.sql.*;
@@ -11,7 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class PostDAO {
+public class PostDAO extends PostServlet {
+    UserDAO userDAO;
     /**
      * 添加动态
      * @param post
@@ -35,15 +37,14 @@ public class PostDAO {
     }
 
     /**
-     * 根据最新时间获取动态
-     * @param flag 当前已显示的动态条数
+     * 分页根据最新时间获取动态
+     * @param pageNo
+     * @param pageSize
      * @return
      */
-    public List<Post> getPostsByTime(int flag) {
-        // 定义记录索引值
-        int firstIndex = flag-1;
-        // 每次最大数目
-        int size = 10;
+    public List<Post> getPostsByTime(int pageNo, int pageSize) {
+        // 定义本页记录索引值
+        int firstIndex = pageSize * (pageNo-1);
         List<Post> list = new ArrayList<Post>();
         Connection connection = DBUtil.getConnection();
         if (connection == null)
@@ -54,10 +55,10 @@ public class PostDAO {
             pstmt = connection.prepareStatement(
                     "SELECT * FROM tb_post ORDER BY post_time DESC LIMIT ?,?");
             pstmt.setInt(1, firstIndex);
-            pstmt.setInt(2, size);
-
+            pstmt.setInt(2, pageSize);
             rs = pstmt.executeQuery();
             while (rs.next()) {
+                userDAO = new UserDAO();
                 Post post= new Post(
                         rs.getInt("post_id"),
                         rs.getInt("user_id"),
@@ -66,48 +67,9 @@ public class PostDAO {
                         rs.getDate("post_time"),
                         rs.getInt("post_clout"),
                         rs.getInt("post_like"),
-                        rs.getInt("post_comment")
+                        rs.getInt("post_comment"),
+                        userDAO.findUserByID(rs.getInt("user_id"))
                 );
-                list.add(post);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            DBUtil.closeJDBC(rs, pstmt, connection);
-        }
-        return list;
-    }
-
-    public List<Post> getPostsByTime(int flag, int user_id) {
-        // 定义记录索引值
-        int firstIndex = flag-1;
-        // 每次最大数目
-        int size = 10;
-        List<Post> list = new ArrayList<Post>();
-        Connection connection = DBUtil.getConnection();
-        if (connection == null)
-            return null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        try {
-            pstmt = connection.prepareStatement(
-                    "SELECT * FROM tb_post ORDER BY post_time DESC LIMIT ?,?");
-            pstmt.setInt(1, firstIndex);
-            pstmt.setInt(2, size);
-
-            rs = pstmt.executeQuery();
-            while (rs.next()) {
-                Post post= new Post(
-                        rs.getInt("post.post_id"),
-                        rs.getInt("post.user_id"),
-                        rs.getString("post_content"),
-                        rs.getString("post_annex"),
-                        rs.getDate("post_time"),
-                        rs.getInt("post_clout"),
-                        rs.getInt("post_like"),
-                        rs.getInt("post_comment")
-                );
-                //todo like
                 list.add(post);
             }
         } catch (Exception e) {
@@ -119,15 +81,14 @@ public class PostDAO {
     }
 
     /**
-     * 根据热度获取动态
-     * @param flag 当前已显示的动态条数
+     * 分页根据热度获取动态
+     * @param pageNo
+     * @param pageSize
      * @return
      */
-    public List<Post> getPostsByClout(int flag) {
-        // 定义记录索引值
-        int firstIndex = flag-1;
-        // 每次最大数目
-        int size = 10;
+    public List<Post> getPostsByClout(int pageNo, int pageSize) {
+        // 定义本页记录索引值
+        int firstIndex = pageSize * (pageNo-1);
         List<Post> list = new ArrayList<Post>();
         Connection connection = DBUtil.getConnection();
         if (connection == null)
@@ -138,9 +99,10 @@ public class PostDAO {
             pstmt = connection.prepareStatement(
                     "SELECT * FROM tb_post ORDER BY post_clout DESC LIMIT ?,?");
             pstmt.setInt(1, firstIndex);
-            pstmt.setInt(2, size);
+            pstmt.setInt(2, pageSize);
             rs = pstmt.executeQuery();
             while (rs.next()) {
+                userDAO = new UserDAO();
                 Post post= new Post(
                         rs.getInt("post_id"),
                         rs.getInt("user_id"),
@@ -149,7 +111,8 @@ public class PostDAO {
                         rs.getDate("post_time"),
                         rs.getInt("post_clout"),
                         rs.getInt("post_like"),
-                        rs.getInt("post_comment")
+                        rs.getInt("post_comment"),
+                        userDAO.findUserByID(rs.getInt("user_id"))
                 );
                 list.add(post);
             }
@@ -161,58 +124,16 @@ public class PostDAO {
         return list;
     }
 
-    public List<Post> getPostsByClout(int flag, int user_id) {
-        // 定义记录索引值
-        int firstIndex = flag-1;
-        // 每次最大数目
-        int size = 10;
-        List<Post> list = new ArrayList<Post>();
-        Connection connection = DBUtil.getConnection();
-        if (connection == null)
-            return null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        try {
-            pstmt = connection.prepareStatement(
-                    "SELECT * FROM tb_post ORDER BY post_clout DESC LIMIT ?,?");
-            pstmt.setInt(1, firstIndex);
-            pstmt.setInt(2, size);
-
-            rs = pstmt.executeQuery();
-            while (rs.next()) {
-                Post post= new Post(
-                        rs.getInt("post.post_id"),
-                        rs.getInt("post.user_id"),
-                        rs.getString("post_content"),
-                        rs.getString("post_annex"),
-                        rs.getDate("post_time"),
-                        rs.getInt("post_clout"),
-                        rs.getInt("post_like"),
-                        rs.getInt("post_comment")
-                );
-                //todo like
-                list.add(post);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            DBUtil.closeJDBC(rs, pstmt, connection);
-        }
-        return list;
-    }
-
-    //todo 关键词查询
     /**
-     * 查询个人已点赞的动态
+     * 分页查询个人已点赞的动态
      * @param user_id
-     * @param flag 当前已显示的动态条数
+     * @param pageNo
+     * @param pageSize
      * @return
      */
-    public List<Post> getPostsByLike(int flag, int user_id) {
-        // 定义记录索引值
-        int firstIndex = flag-1;
-        // 每次最大数目
-        int size = 10;
+    public List<Post> getPostsByLike(int pageSize, int pageNo, int user_id) {
+        // 定义本页记录索引值
+        int firstIndex = pageSize * (pageNo-1);
         List<Post> list = new ArrayList<Post>();
         Connection connection = DBUtil.getConnection();
         if (connection == null)
@@ -225,7 +146,7 @@ public class PostDAO {
                             "AND tb_like.user_id=? ORDER BY like_time DESC LIMIT ?,?");
             pstmt.setInt(1, user_id);
             pstmt.setInt(2, firstIndex);
-            pstmt.setInt(3, size);
+            pstmt.setInt(3, pageSize);
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 Post post= new Post(
@@ -249,6 +170,9 @@ public class PostDAO {
         return list;
     }
 
+    //todo 关键词查询
+
+
     /**
      * 获取动态详情
      * @param post_id
@@ -260,6 +184,7 @@ public class PostDAO {
         Connection conn = DBUtil.getConnection();
         PreparedStatement pstmt = null;
         try {
+            userDAO = new UserDAO();
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, post_id);
             ResultSet rs = pstmt.executeQuery();
@@ -272,54 +197,97 @@ public class PostDAO {
                 post.setPost_clout(rs.getInt("post_clout"));
                 post.setPost_like(rs.getInt("post_like"));
                 post.setPost_comment(rs.getInt("post_comment"));
+                post.setUser(userDAO.findUserByID(rs.getInt("user_id")));
+                post.setCommentList(getCommentListDetail(post_id));
             }
-            //加载评论
-            Comment comment = new Comment();
-            String sql2 = "SELECT * FROM tb_comment WHERE post_id=?";
-            pstmt = conn.prepareStatement(sql2);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.closeJDBC(null, pstmt, conn);
+        }
+        return post;
+    }
+    public List<Comment> getCommentListDetail(int post_id) {
+        //加载评论
+        List<Comment> commentList = new ArrayList<Comment>();
+        String sql = "SELECT * FROM tb_comment WHERE post_id=?";
+        Connection conn = DBUtil.getConnection();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            userDAO = new UserDAO();
+
+            pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, post_id);
             rs = pstmt.executeQuery();
-            if(rs.next()){
+            while(rs.next()){
+                Comment comment = new Comment();
                 comment.setUser_id(rs.getInt("user_id"));
                 comment.setComment_content(rs.getString("comment_content"));
                 comment.setComment_time(rs.getTimestamp("comment_time"));
-                post.getCommentList().add(comment);
+                comment.setUser(userDAO.findUserByID(rs.getInt("user_id")));
+                commentList.add(comment);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             DBUtil.closeJDBC(null, pstmt, conn);
         }
-        return post;
+        return commentList;
     }
 
-    public Post getPostDetail(int post_id, int user_id) {//todo
-        Post post = new Post();
-        String sql = "SELECT * FROM tb_post WHERE post_id=?";
+
+    /**
+     * 查询所需分页的总记录数
+     * @return
+     */
+    public int getRecordCount() {
+        int recordCount = 0;
         Connection conn = DBUtil.getConnection();
         PreparedStatement pstmt = null;
+        ResultSet rs = null;
         try {
+            String sql = "SELECT count(*) FROM tb_post";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, post_id);
-            ResultSet rs = pstmt.executeQuery();
-            if(rs.next()){
-                post.setPsot_id(rs.getInt("post_id"));
-                post.setUser_id(rs.getInt("user_id"));
-                post.setPost_content(rs.getString("post_content"));
-                post.setPost_annex(rs.getString("post_annex"));
-                post.setPost_time(rs.getTimestamp("post_time"));
-                post.setPost_clout(rs.getInt("post_clout"));
-                post.setPost_like(rs.getInt("post_like"));
-                post.setPost_comment(rs.getInt("post_comment"));
-            }
-
-        } catch (SQLException e) {
+            rs = pstmt.executeQuery();
+            if (rs.next())
+                recordCount = rs.getInt(1);
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            DBUtil.closeJDBC(null, pstmt, conn);
+            DBUtil.closeJDBC(rs, pstmt, conn);
         }
-        return post;
+        return recordCount;
     }
+
+//    public Post getPostDetail(int post_id, int user_id) {//todo
+//        Post post = new Post();
+//        String sql = "SELECT * FROM tb_post WHERE post_id=?";
+//        Connection conn = DBUtil.getConnection();
+//        PreparedStatement pstmt = null;
+//        try {
+//            pstmt = conn.prepareStatement(sql);
+//            pstmt.setInt(1, post_id);
+//            ResultSet rs = pstmt.executeQuery();
+//            if(rs.next()){
+//                post.setPsot_id(rs.getInt("post_id"));
+//                post.setUser_id(rs.getInt("user_id"));
+//                post.setPost_content(rs.getString("post_content"));
+//                post.setPost_annex(rs.getString("post_annex"));
+//                post.setPost_time(rs.getTimestamp("post_time"));
+//                post.setPost_clout(rs.getInt("post_clout"));
+//                post.setPost_like(rs.getInt("post_like"));
+//                post.setPost_comment(rs.getInt("post_comment"));
+//            }
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } finally {
+//            DBUtil.closeJDBC(null, pstmt, conn);
+//        }
+//        return post;
+//    }
 
     public boolean isliked(int post_id, int user_id) {
         Like like = new Like();
@@ -552,17 +520,19 @@ public class PostDAO {
             DBUtil.closeJDBC(null, pstmt, conn);
         }
     }
+
 //todo
-//
 //    /**
-//     * 分页根据最新时间获取动态
-//     * @param pageNo
-//     * @param pageSize
+//     * 查询个人已点赞的动态
+//     * @param user_id
+//     * @param flag 当前已显示的动态条数
 //     * @return
 //     */
-//    public List<Post> getPostsByTime(int pageNo, int pageSize) {
-//        // 定义本页记录索引值
-//        int firstIndex = pageSize * (pageNo-1);
+//    public List<Post> getPostsByLike(int flag, int user_id) {
+//        // 定义记录索引值
+//        int firstIndex = flag-1;
+//        // 每次最大数目
+//        int size = 10;
 //        List<Post> list = new ArrayList<Post>();
 //        Connection connection = DBUtil.getConnection();
 //        if (connection == null)
@@ -571,59 +541,23 @@ public class PostDAO {
 //        ResultSet rs = null;
 //        try {
 //            pstmt = connection.prepareStatement(
-//                    "SELECT * FROM tb_post ORDER BY post_time DESC LIMIT ?,?");
-//            pstmt.setInt(1, firstIndex);
-//            pstmt.setInt(2, pageSize);
+//                    "SELECT * FROM tb_post INNER JOIN tb_like ON tb_post.post_id=tb_like.post_id " +
+//                            "AND tb_like.user_id=? ORDER BY like_time DESC LIMIT ?,?");
+//            pstmt.setInt(1, user_id);
+//            pstmt.setInt(2, firstIndex);
+//            pstmt.setInt(3, size);
 //            rs = pstmt.executeQuery();
 //            while (rs.next()) {
 //                Post post= new Post(
-//                        rs.getInt("post_id"),
-//                        rs.getInt("user_id"),
-//                        rs.getString("post_content"),
-//                        rs.getString("post_annex"),
-//                        rs.getDate("post_time"),
-//                        rs.getInt("post_clout"),
-//                        rs.getInt("post_like"),
-//                        rs.getInt("post_comment")
-//                );
-//                list.add(post);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            DBUtil.closeJDBC(rs, pstmt, connection);
-//        }
-//        return list;
-//    }
-//
-//    public List<Post> getPostsByTime(int user_id, int pageNo, int pageSize)
-//    {
-//        // 定义本页记录索引值
-//        int firstIndex = pageSize * (pageNo-1);
-//        List<Post> list = new ArrayList<Post>();
-//        Connection connection = DBUtil.getConnection();
-//        if (connection == null)
-//            return null;
-//        PreparedStatement pstmt = null;
-//        ResultSet rs = null;
-//        try {
-//            pstmt = connection.prepareStatement(
-//                    "SELECT * FROM tb_post LEFT JOIN tb_like ON tb_post.post_id=tb_like.post_id "  +
-//                            " ORDER BY post_time DESC LIMIT ?,?");
-//            pstmt.setInt(1, firstIndex);
-//            pstmt.setInt(2, pageSize);
-//            rs = pstmt.executeQuery();
-//            while (rs.next()) {
-//                Post post= new Post(
-//                        rs.getInt("post.post_id"),
-//                        rs.getInt("post.user_id"),
+//                        rs.getInt("tb_post.post_id"),
+//                        rs.getInt("tb_post.user_id"),
 //                        rs.getString("post_content"),
 //                        rs.getString("post_annex"),
 //                        rs.getDate("post_time"),
 //                        rs.getInt("post_clout"),
 //                        rs.getInt("post_like"),
 //                        rs.getInt("post_comment"),
-//                        user_id == rs.getInt("like.user_id")
+//                        rs.getBoolean("islike")
 //                );
 //                list.add(post);
 //            }
@@ -634,49 +568,43 @@ public class PostDAO {
 //        }
 //        return list;
 //    }
-//
-//    /**
-//     * 分页根据热度获取动态
-//     * @param pageNo
-//     * @param pageSize
-//     * @return
-//     */
-//    public List<Post> getPostsByClout(int pageNo, int pageSize) {
-//        // 定义本页记录索引值
-//        int firstIndex = pageSize * (pageNo-1);
-//        List<Post> list = new ArrayList<Post>();
-//        Connection connection = DBUtil.getConnection();
-//        if (connection == null)
-//            return null;
-//        PreparedStatement pstmt = null;
-//        ResultSet rs = null;
-//        try {
-//            pstmt = connection.prepareStatement(
-//                    "SELECT * FROM tb_post ORDER BY post_clout DESC LIMIT ?,?");
-//            pstmt.setInt(1, firstIndex);
-//            pstmt.setInt(2, pageSize);
-//            rs = pstmt.executeQuery();
-//            while (rs.next()) {
-//                Post post= new Post(
-//                        rs.getInt("post_id"),
-//                        rs.getInt("user_id"),
-//                        rs.getString("post_content"),
-//                        rs.getString("post_annex"),
-//                        rs.getDate("post_time"),
-//                        rs.getInt("post_clout"),
-//                        rs.getInt("post_like"),
-//                        rs.getInt("post_comment")
-//                );
-//                list.add(post);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            DBUtil.closeJDBC(rs, pstmt, connection);
+//public List<Post> getPostsByTime(int user_id, int pageNo, int pageSize) {
+//    // 定义本页记录索引值
+//    int firstIndex = pageSize * (pageNo-1);
+//    List<Post> list = new ArrayList<Post>();
+//    Connection connection = DBUtil.getConnection();
+//    if (connection == null)
+//        return null;
+//    PreparedStatement pstmt = null;
+//    ResultSet rs = null;
+//    try {
+//        pstmt = connection.prepareStatement(
+//                "SELECT * FROM tb_post LEFT JOIN tb_like ON tb_post.post_id=tb_like.post_id "  +
+//                        " ORDER BY post_time DESC LIMIT ?,?");
+//        pstmt.setInt(1, firstIndex);
+//        pstmt.setInt(2, pageSize);
+//        rs = pstmt.executeQuery();
+//        while (rs.next()) {
+//            Post post= new Post(
+//                    rs.getInt("post.post_id"),
+//                    rs.getInt("post.user_id"),
+//                    rs.getString("post_content"),
+//                    rs.getString("post_annex"),
+//                    rs.getDate("post_time"),
+//                    rs.getInt("post_clout"),
+//                    rs.getInt("post_like"),
+//                    rs.getInt("post_comment"),
+//                    user_id == rs.getInt("like.user_id")
+//            );
+//            list.add(post);
 //        }
-//        return list;
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//    } finally {
+//        DBUtil.closeJDBC(rs, pstmt, connection);
 //    }
-//
+//    return list;
+//}
 //    public List<Post> getPostsByClout(int user_id, int pageNo, int pageSize) {
 //        // 定义本页记录索引值
 //        int firstIndex = pageSize * (pageNo-1);
@@ -715,19 +643,16 @@ public class PostDAO {
 //        }
 //        return list;
 //    }
-//
-//    public List<Post> findPostsByKey
-//
 //    /**
-//     * 分页查询个人已点赞的动态
-//     * @param user_id
-//     * @param pageNo
-//     * @param pageSize
+//     * 根据最新时间获取动态
+//     * @param flag 当前已显示的动态条数
 //     * @return
 //     */
-//    public List<Post> getPostsByLike(int user_id, int pageNo, int pageSize) {
-//        // 定义本页记录索引值
-//        int firstIndex = pageSize * (pageNo-1);
+//    public List<Post> getPostsByTime(int flag) {
+//        // 定义记录索引值
+//        int firstIndex = flag-1;
+//        // 每次最大数目
+//        int size = 10;
 //        List<Post> list = new ArrayList<Post>();
 //        Connection connection = DBUtil.getConnection();
 //        if (connection == null)
@@ -736,23 +661,20 @@ public class PostDAO {
 //        ResultSet rs = null;
 //        try {
 //            pstmt = connection.prepareStatement(
-//                    "SELECT * FROM tb_post INNER JOIN tb_like ON tb_post.post_id=tb_like.post_id " +
-//                            "AND tb_like.user_id=? ORDER BY like_time DESC LIMIT ?,?");
-//            pstmt.setInt(1, user_id);
-//            pstmt.setInt(2, firstIndex);
-//            pstmt.setInt(3, pageSize);
+//                    "SELECT * FROM tb_post ORDER BY post_time DESC LIMIT ?,?");
+//            pstmt.setInt(1, firstIndex);
+//            pstmt.setInt(2, size);
 //            rs = pstmt.executeQuery();
 //            while (rs.next()) {
 //                Post post= new Post(
-//                        rs.getInt("tb_post.post_id"),
-//                        rs.getInt("tb_post.user_id"),
+//                        rs.getInt("post_id"),
+//                        rs.getInt("user_id"),
 //                        rs.getString("post_content"),
 //                        rs.getString("post_annex"),
 //                        rs.getDate("post_time"),
 //                        rs.getInt("post_clout"),
 //                        rs.getInt("post_like"),
-//                        rs.getInt("post_comment"),
-//                        rs.getBoolean("islike")
+//                        rs.getInt("post_comment")
 //                );
 //                list.add(post);
 //            }
@@ -763,5 +685,127 @@ public class PostDAO {
 //        }
 //        return list;
 //    }
+//    public List<Post> getPostsByTime(int flag, int user_id) {
+//        // 定义记录索引值
+//        int firstIndex = flag-1;
+//        // 每次最大数目
+//        int size = 10;
+//        List<Post> list = new ArrayList<Post>();
+//        Connection connection = DBUtil.getConnection();
+//        if (connection == null)
+//            return null;
+//        PreparedStatement pstmt = null;
+//        ResultSet rs = null;
+//        try {
+//            pstmt = connection.prepareStatement(
+//                    "SELECT * FROM tb_post ORDER BY post_time DESC LIMIT ?,?");
+//            pstmt.setInt(1, firstIndex);
+//            pstmt.setInt(2, size);
+//            rs = pstmt.executeQuery();
+//            while (rs.next()) {
+//                Post post= new Post(
+//                        rs.getInt("post.post_id"),
+//                        rs.getInt("post.user_id"),
+//                        rs.getString("post_content"),
+//                        rs.getString("post_annex"),
+//                        rs.getDate("post_time"),
+//                        rs.getInt("post_clout"),
+//                        rs.getInt("post_like"),
+//                        rs.getInt("post_comment")
+//                );
+//                //todo like
+//                list.add(post);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            DBUtil.closeJDBC(rs, pstmt, connection);
+//        }
+//        return list;
+//    }
+//    /**
+//     * 根据热度获取动态
+//     * @param flag 当前已显示的动态条数
+//     * @return
+//     */
+//    public List<Post> getPostsByClout(int flag) {
+//        // 定义记录索引值
+//        int firstIndex = flag-1;
+//        // 每次最大数目
+//        int size = 10;
+//        List<Post> list = new ArrayList<Post>();
+//        Connection connection = DBUtil.getConnection();
+//        if (connection == null)
+//            return null;
+//        PreparedStatement pstmt = null;
+//        ResultSet rs = null;
+//        try {
+//            pstmt = connection.prepareStatement(
+//                    "SELECT * FROM tb_post ORDER BY post_clout DESC LIMIT ?,?");
+//            pstmt.setInt(1, firstIndex);
+//            pstmt.setInt(2, size);
+//            rs = pstmt.executeQuery();
+//            while (rs.next()) {
+//                Post post= new Post(
+//                        rs.getInt("post_id"),
+//                        rs.getInt("user_id"),
+//                        rs.getString("post_content"),
+//                        rs.getString("post_annex"),
+//                        rs.getDate("post_time"),
+//                        rs.getInt("post_clout"),
+//                        rs.getInt("post_like"),
+//                        rs.getInt("post_comment")
+//                );
+//                list.add(post);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            DBUtil.closeJDBC(rs, pstmt, connection);
+//        }
+//        return list;
+//    }
+//    public List<Post> getPostsByClout(int flag, int user_id) {
+//        // 定义记录索引值
+//        int firstIndex = flag-1;
+//        // 每次最大数目
+//        int size = 10;
+//        List<Post> list = new ArrayList<Post>();
+//        Connection connection = DBUtil.getConnection();
+//        if (connection == null)
+//            return null;
+//        PreparedStatement pstmt = null;
+//        ResultSet rs = null;
+//        try {
+//            pstmt = connection.prepareStatement(
+//                    "SELECT * FROM tb_post ORDER BY post_clout DESC LIMIT ?,?");
+//            pstmt.setInt(1, firstIndex);
+//            pstmt.setInt(2, size);
+//
+//            rs = pstmt.executeQuery();
+//            while (rs.next()) {
+//                Post post= new Post(
+//                        rs.getInt("post.post_id"),
+//                        rs.getInt("post.user_id"),
+//                        rs.getString("post_content"),
+//                        rs.getString("post_annex"),
+//                        rs.getDate("post_time"),
+//                        rs.getInt("post_clout"),
+//                        rs.getInt("post_like"),
+//                        rs.getInt("post_comment")
+//                );
+//                //todo like
+//                list.add(post);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            DBUtil.closeJDBC(rs, pstmt, connection);
+//        }
+//        return list;
+//    }
+
+
+
 
 }

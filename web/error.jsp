@@ -9,7 +9,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>锐聘网</title>
+<title>DOSLEEP</title>
 <base href="<%=basePath%>">
 <link href="css/base.css" type="text/css" rel="stylesheet" />
 <link href="css/error.css" type="text/css" rel="stylesheet" />

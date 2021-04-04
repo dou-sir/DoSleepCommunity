@@ -1,8 +1,10 @@
 package jit.dyy.dosleep.bean;
 
+import jit.dyy.dosleep.dao.PostDAO;
+
 import java.util.*;
 
-public class Post {
+public class Post extends PostDAO {
     private int psot_id;
     private int user_id;
     private String post_content;
@@ -13,6 +15,8 @@ public class Post {
     private int post_comment;
     private boolean islike;
     private List<Comment> commentList = new ArrayList<Comment>();
+
+    private User user;
 
     public Post() {
         super();
@@ -49,6 +53,26 @@ public class Post {
         this.post_like = post_like;
         this.post_comment = post_comment;
         this.islike = islike;
+    }
+
+    public Post(int psot_id, int user_id, String post_content, String post_annex, Date post_time, int post_clout, int post_like, int post_comment, User user) {
+        this.psot_id = psot_id;
+        this.user_id = user_id;
+        this.post_content = post_content;
+        this.post_annex = post_annex;
+        this.post_time = post_time;
+        this.post_clout = post_clout;
+        this.post_like = post_like;
+        this.post_comment = post_comment;
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public int getPsot_id() {

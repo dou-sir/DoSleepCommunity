@@ -8,6 +8,8 @@ public class Comment {
     private String comment_content;
     private Date comment_time;
 
+    private User user;
+
     public Comment() {
         super();
     }
@@ -18,6 +20,22 @@ public class Comment {
         this.user_id = user_id;
         this.comment_content = comment_content;
         this.comment_time = comment_time;
+    }
+
+    public Comment(int psot_id, int user_id, String comment_content, Date comment_time, User user) {
+        this.psot_id = psot_id;
+        this.user_id = user_id;
+        this.comment_content = comment_content;
+        this.comment_time = comment_time;
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public int getPsot_id() {
